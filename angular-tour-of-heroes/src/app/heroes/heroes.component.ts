@@ -4,6 +4,7 @@ import { NgFor, NgIf, UpperCasePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HeroDetailComponent } from '../hero-detail/hero-detail.component';
 import { HeroService } from '../hero.service';
+import { MessageService } from '../message.service';
 
 
 @Component({
@@ -19,13 +20,14 @@ export class HeroesComponent {
     name: 'WIndstorm',
   };
 
-  constructor(private heroService: HeroService) {}
+  constructor(private heroService: HeroService, private messageService: MessageService) {}
 
   heroes: Hero[] = [];
   selectedHero?: Hero;
 
   onSelect(hero: Hero) {
     this.selectedHero = hero;
+    this.messageService.add(`HeroesComponent: Selected hero id=${hero.id}`);
   }
 
   ngOnInit(): void {
