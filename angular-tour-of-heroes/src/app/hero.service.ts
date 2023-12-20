@@ -13,7 +13,7 @@ export class HeroService {
   private heroesUrl = 'api/heroes'; // URL to web api
 
   httpOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    headers: new HttpHeaders({ 'Content-Type': 'application/json' }),
   };
 
   constructor(
@@ -52,10 +52,26 @@ export class HeroService {
   }
 
   deleteHero(id: Number): Observable<Hero> {
-    const url = `${this.heroesUrl}/${id}`
+    const url = `${this.heroesUrl}/${id}`;
     return this.http.delete<Hero>(url, this.httpOptions).pipe(
-      tap(_ => this.log(`deleted hero w/ id=${id}`)),
+      tap((_) => this.log(`deleted hero w/ id=${id}`)),
       catchError(this.handleError<Hero>('addHero'))
+    );
+  }
+
+  /* GET heroes whose name contains search term */
+  searchHeroes(term: string): Observable<Hero[]> {
+    if (!term.trim()) {
+      // if not search term, return empty hero array.
+      return of([]);
+    }
+    return this.http.get<Hero[]>(`${this.heroesUrl}/?name=${term}`).pipe(
+      tap((x) =>
+        x.length
+          ? this.log(`found heroes matching "${term}"`)
+          : this.log(`no heroes matching "${term}"`)
+      ),
+      catchError(this.handleError<Hero[]>('searchHeroes', []))
     );
   }
 
